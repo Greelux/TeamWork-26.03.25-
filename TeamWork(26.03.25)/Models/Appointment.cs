@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TeamWork_26._03._25_.Models
+namespace HealthMeet.Models
 {
-    internal class Appointment
+    public class Appointment
     {
+        public int Id { get; set; }
+        public int PatientId { get; set; }
+        public int DoctorId { get; set; }
+        public DateTime ScheduledAt { get; set; }
+        public string Status { get; set; }
     }
 }
