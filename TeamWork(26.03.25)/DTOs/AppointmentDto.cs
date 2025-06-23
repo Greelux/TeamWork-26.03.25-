@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TeamWork_26._03._25_.DTOs
+namespace HealthMeet.DTOs
 {
-    internal class AppointmentDto
+    public class AppointmentDto
     {
+        public int PatientId { get; set; }
+        public int DoctorId { get; set; }
+        public DateTime ScheduledAt { get; set; }
     }
 }
