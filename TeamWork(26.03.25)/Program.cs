@@ -8,9 +8,11 @@ namespace HealthMeet
 {
     internal class Program
     {
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Console.OutputEncoding = Encoding.UTF8;
+
         }
     }
 }
