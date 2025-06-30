@@ -1,22 +1,13 @@
-﻿using HealthMeet.Data;
-using HealthMeet.DTOs;
-using HealthMeet.Services;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using HealthMeet.DTOs;
 
 class Program
 {
-    static async Task Main(string[] args)
+    static async Task Main()
     {
         var connectionString = "Server=localhost;Database=HealthMeet;Trusted_Connection=True;";
-
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlServer(connectionString)
-            .Options;
-
-        using var context = new ApplicationDbContext(options);
-        var service = new AppointmentService(context);
+        var repo = new AppointmentRepository(connectionString);
 
         while (true)
         {
@@ -24,17 +15,17 @@ class Program
             Console.WriteLine("1. Створити прийом");
             Console.WriteLine("2. Скасувати прийом");
             Console.WriteLine("3. Завершити прийом");
-            Console.WriteLine("4. Історія прийомів (JOIN Dapper)");
+            Console.WriteLine("4. Історія прийомів (JOIN)");
             Console.WriteLine("0. Вийти");
             Console.Write("Оберіть опцію: ");
 
             var choice = Console.ReadLine();
             switch (choice)
             {
-                case "1": await CreateAppointment(service); break;
-                case "2": await CancelAppointment(service); break;
-                case "3": await CompleteAppointment(service); break;
-                case "4": await ShowAppointmentHistory(connectionString); break;
+                case "1": await Create(repo); break;
+                case "2": await Cancel(repo); break;
+                case "3": await Complete(repo); break;
+                case "4": await ShowHistory(repo); break;
                 case "0": return;
             }
 
@@ -42,51 +33,45 @@ class Program
         }
     }
 
-    static async Task CreateAppointment(IAppointmentService service)
+    static async Task Create(AppointmentRepository repo)
     {
         Console.Write("PatientId: ");
-        int patientId = int.Parse(Console.ReadLine());
-
+        int pid = int.Parse(Console.ReadLine());
         Console.Write("DoctorId: ");
-        int doctorId = int.Parse(Console.ReadLine());
+        int did = int.Parse(Console.ReadLine());
+        Console.Write("Дата (yyyy-MM-dd HH:mm): ");
+        DateTime date = DateTime.Parse(Console.ReadLine());
 
-        Console.Write("Дата і час (yyyy-MM-dd HH:mm): ");
-        DateTime time = DateTime.Parse(Console.ReadLine());
-
-        var dto = new AppointmentDto { PatientId = patientId, DoctorId = doctorId, ScheduledAt = time };
-        var (ok, msg) = await service.CreateAppointmentAsync(dto);
+        var dto = new AppointmentDto { PatientId = pid, DoctorId = did, ScheduledAt = date };
+        var (ok, msg) = await repo.CreateAppointmentAsync(dto);
         Console.WriteLine(msg);
     }
 
-    static async Task CancelAppointment(IAppointmentService service)
+    static async Task Cancel(AppointmentRepository repo)
     {
         Console.Write("AppointmentId: ");
         int id = int.Parse(Console.ReadLine());
-        var ok = await service.CancelAppointmentAsync(id);
-        Console.WriteLine(ok ? "Скасовано" : "Не знайдено або неможливо скасувати.");
+        Console.WriteLine(await repo.CancelAppointmentAsync(id) ? "Скасовано" : "Не вдалося.");
     }
 
-    static async Task CompleteAppointment(IAppointmentService service)
+    static async Task Complete(AppointmentRepository repo)
     {
         Console.Write("AppointmentId: ");
         int id = int.Parse(Console.ReadLine());
-        var ok = await service.CompleteAppointmentAsync(id);
-        Console.WriteLine(ok ? "Завершено" : "Не знайдено або вже завершено.");
+        Console.WriteLine(await repo.CompleteAppointmentAsync(id) ? "Завершено" : "Не вдалося.");
     }
 
-    static async Task ShowAppointmentHistory(string connectionString)
+    static async Task ShowHistory(AppointmentRepository repo)
     {
-        var repo = new AppointmentRepository(connectionString);
-        var history = await repo.GetAppointmentHistoryAsync(sqlConnection);
-
-        foreach (var a in history)
+        var history = await repo.GetAppointmentHistoryAsync();
+        foreach (var h in history)
         {
-            Console.WriteLine($"ID: {a.AppointmentId}");
-            Console.WriteLine($"Пацієнт: {a.PatientUsername}");
-            Console.WriteLine($"Лікар: {a.DoctorUsername}");
-            Console.WriteLine($"Спеціальність: {a.SpecialtyName}");
-            Console.WriteLine($"Час: {a.ScheduledAt}");
-            Console.WriteLine($"Статус: {a.Status}");
+            Console.WriteLine($"ID: {h.AppointmentId}");
+            Console.WriteLine($"Пацієнт: {h.PatientUsername}");
+            Console.WriteLine($"Лікар: {h.DoctorUsername}");
+            Console.WriteLine($"Спеціальність: {h.SpecialtyName}");
+            Console.WriteLine($"Час: {h.ScheduledAt}");
+            Console.WriteLine($"Статус: {h.Status}");
             Console.WriteLine(new string('-', 30));
         }
     }
