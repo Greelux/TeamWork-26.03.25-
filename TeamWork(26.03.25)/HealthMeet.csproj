@@ -106,6 +106,7 @@
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\UserService.cs" />
     <Compile Include="Data\ApplicationDbContext.cs" />
+    <Compile Include="Data\AppointmentRepository.cs" />
     <Compile Include="Data\SeedData.cs" />
     <Compile Include="DTOs\AppointmentDto.cs" />
     <Compile Include="DTOs\AppointmentHistoryDto.cs" />

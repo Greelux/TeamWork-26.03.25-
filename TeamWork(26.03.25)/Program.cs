@@ -6,7 +6,7 @@ class Program
 {
     static async Task Main()
     {
-        var connectionString = "Server=localhost;Database=HealthMeet;Trusted_Connection=True;";
+        var connectionString = "Server=DESKTOP-3OLQEIJ;Database=HealthMeet;Trusted_Connection=True;";
         var repo = new AppointmentRepository(connectionString);
 
         while (true)
