@@ -34,7 +34,7 @@ namespace TeamWork_26._03._25_.Controllers
         {
             Console.WriteLine($"Привіт 30.06");
             var user = users.FirstOrDefault(u => u.Email == dto.Email && u.PasswordHash == dto.Password);
-            return user == null ? "Помилка входу" : $"Привіт, {user.FullName}";            
+            return user == null ? "Помилка входу" : $"Привіт, {user.FullName}";
         }
     }
 }
