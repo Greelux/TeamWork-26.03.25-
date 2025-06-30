@@ -1,12 +1,18 @@
-﻿using System;
+﻿using HealthMeet.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Remoting.Contexts;
+using TeamWork_26._03._25_.Models;
 
-namespace TeamWork_26._03._25_.Data
+namespace HealthMeet.Data
 {
-    internal class ApplicationDbContext
+    public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
+
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Specialty> Specialties { get; set; }
     }
 }
