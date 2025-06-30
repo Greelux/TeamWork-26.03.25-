@@ -18,7 +18,7 @@ class Program
             Console.WriteLine("4. Історія прийомів (JOIN)");
             Console.WriteLine("0. Вийти");
             Console.Write("Оберіть опцію: ");
-
+            Console.WriteLine("30.06.2025");
             var choice = Console.ReadLine();
             switch (choice)
             {
