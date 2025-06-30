@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace TeamWork_26._03._25_.DTOs
 {
-    internal class LoginDto
+    public class LoginDto
     {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

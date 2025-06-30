@@ -64,7 +64,8 @@ class Program
     static async Task ShowHistory(AppointmentRepository repo)
     {
         var history = await repo.GetAppointmentHistoryAsync();
-        foreach (var h in history)
+     
+   foreach (var h in history)
         {
             Console.WriteLine($"ID: {h.AppointmentId}");
             Console.WriteLine($"Пацієнт: {h.PatientUsername}");
