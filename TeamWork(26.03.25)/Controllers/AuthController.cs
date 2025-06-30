@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +31,6 @@ namespace TeamWork_26._03._25_.Controllers
 
         public string Login(LoginDto dto)
         {
-            Console.WriteLine($"Привіт 30.06");
             var user = users.FirstOrDefault(u => u.Email == dto.Email && u.PasswordHash == dto.Password);
             return user == null ? "Помилка входу" : $"Привіт, {user.FullName}";
         }
