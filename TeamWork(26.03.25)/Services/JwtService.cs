@@ -17,7 +17,8 @@ namespace TeamWork_26._03._25_.Services
             {
                 new Claim("UserId", user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(ClaimTypes.Name, user.FullName)
+                new Claim(ClaimTypes.Name, user.Username)
+
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey)); ////Створюється симетричний ключ

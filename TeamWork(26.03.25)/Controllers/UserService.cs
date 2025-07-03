@@ -16,7 +16,12 @@ namespace TeamWork_26._03._25_.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 var sql = "INSERT INTO Users (Username, Password, Role) VALUES (@Username, @Password, @Role)";
-                connection.Execute(sql, user);
+                connection.Execute(sql, new
+                {
+                    Username = user.Username,
+                    Password = user.Password,
+                    Role = user.Role.ToString() // если Role — это enum
+                });
             }
         }
 
