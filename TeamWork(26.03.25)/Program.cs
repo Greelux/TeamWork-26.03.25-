@@ -1,11 +1,71 @@
-﻿using System;
+﻿using HealthMeet.DTOs;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
-using HealthMeet.DTOs;
+using TeamWork_26._03._25_.Controllers;
+using TeamWork_26._03._25_.DTOs;
+using TeamWork_26._03._25_.Models;
 
 class Program
 {
+    static User currentUser = null;
     static async Task Main()
     {
+        var auth = new AuthController();
+
+        while (currentUser == null)
+        {
+            Console.WriteLine("1. Реєстрація");
+            Console.WriteLine("2. Вхід");
+            Console.Write("Виберіть опцію: ");
+            var input = Console.ReadLine();
+
+            if (input == "1")
+            {
+                Console.Write("Ім'я користувача: ");
+                var username = Console.ReadLine();
+
+                Console.Write("Пароль: ");
+                var password = Console.ReadLine();
+
+                Console.Write("Роль (Patient / Doctor): ");
+                var roleStr = Console.ReadLine();
+
+                Enum.TryParse<UserRole>(roleStr, true, out var role);
+
+                var result = auth.Register(new RegisterDto
+                {
+                    Username = username,
+                    Password = password,
+                    Role = role
+                });
+
+                Console.WriteLine(result);
+            }
+            else if (input == "2")
+            {
+                Console.Write("Ім'я користувача: ");
+                var username = Console.ReadLine();
+
+                Console.Write("Пароль: ");
+                var password = Console.ReadLine();
+
+                var result = auth.Login(new LoginDto { Username = username, Password = password });
+
+                if (result.StartsWith("Привіт"))
+                {
+                    currentUser = auth.GetUserByUsername(username); // Отримаємо об'єкт User
+                    Console.WriteLine(result);
+                }
+                else
+                {
+                    Console.WriteLine(result);
+                }
+            }
+        }
         var connectionString = "Server=DESKTOP-3OLQEIJ;Database=HealthMeet;Trusted_Connection=True;";
         var repo = new AppointmentRepository(connectionString);
 
@@ -32,7 +92,33 @@ class Program
             Console.WriteLine();
         }
     }
+    public class JwtService
+    {
+        private readonly string _secretKey = "super_secret_key_1234567890";
 
+        public string GenerateToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim("UserId", user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey)); ////Створюється симетричний ключ
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); ///Формируем Ширфовку для токена, по гайду с ютуба)
+
+            var token = new JwtSecurityToken(
+                issuer: "HealthMeet", ///Указываем издателя токена
+                audience: "HealthMeetUsers", ///Указываем приём токена
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
     static async Task Create(AppointmentRepository repo)
     {
         Console.Write("PatientId: ");
